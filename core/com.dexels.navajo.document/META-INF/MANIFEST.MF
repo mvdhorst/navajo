@@ -32,5 +32,6 @@ Import-Package: com.dexels.navajo.version,
  org.slf4j,
  org.w3c.dom,
  org.xml.sax
-Service-Component: OSGI-INF/navajo.comparator.propertycount.xml
+Service-Component: OSGI-INF/navajo.comparator.propertycount.xml,
+ OSGI-INF/navajo.factory.xml,OSGI-INF/navajo.typemanager.xml
 

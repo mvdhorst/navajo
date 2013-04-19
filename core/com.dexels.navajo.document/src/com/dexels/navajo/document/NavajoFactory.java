@@ -1,15 +1,20 @@
 package com.dexels.navajo.document;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.dexels.navajo.document.base.*;
-import com.dexels.navajo.document.nanoimpl.CaseSensitiveXMLElement;
-import com.dexels.navajo.document.nanoimpl.XMLElement;
+import com.dexels.navajo.document.base.BaseNavajoFactoryImpl;
+import com.dexels.navajo.document.types.TypeManager;
+import com.dexels.navajo.document.types.TypeManagerFactory;
 
 
 /**
@@ -21,7 +26,7 @@ import com.dexels.navajo.document.nanoimpl.XMLElement;
  * @version 1.0
  */
 
-public abstract class NavajoFactory {
+public abstract class NavajoFactory implements TypeManager {
   protected static volatile NavajoFactory impl = null;
   protected File tempDir = null;
   protected static final HashMap<String,NavajoFactory> alternativeFactories = new HashMap<String,NavajoFactory>();
@@ -32,59 +37,9 @@ public abstract class NavajoFactory {
   
   private static Object semaphore = new Object();
   
-  private HashMap<String, Class<?>> toJavaType = new HashMap<String, Class<?>>();
-  private HashMap<Class<?>, String> toNavajoType = new HashMap<Class<?>, String>();
   
   private static final Logger logger = LoggerFactory.getLogger(NavajoFactory.class);
 
-  
-  private void readTypes() throws Exception {
-	  ClassLoader cl = getClass().getClassLoader();
-	  if(cl==null) {
-		  logger.info("Bootstrap classloader detected!");
-		  cl = ClassLoader.getSystemClassLoader();
-	  }
-	 InputStream is = cl.getResourceAsStream("navajotypes.xml");
-	 CaseSensitiveXMLElement types = new CaseSensitiveXMLElement();
-	 types.parseFromStream(is);
-	 is.close();
-	 
-	 Vector<XMLElement> children = types.getChildren();
-	 for (int i = 0; i < children.size(); i++) {
-		 XMLElement child = children.get(i);
-		 String navajotype = (String) child.getAttribute("name");
-		 String javaclass = (String) child.getAttribute("type");
-		 Class<?> c = Class.forName(javaclass);
-		 toJavaType.put(navajotype, c);
-		 toNavajoType.put(c, navajotype);
-	 }
-  }
-  
-  public void addNavajoType(String typeId, Class<?> clz) {
-	  toJavaType.put(typeId, clz);
-	  toNavajoType.put(clz, typeId);
-  }
-  
-  public String getNavajoType(Class<?> c) {
-	  if ( c == null ) {
-		  return "empty";
-	  } else
-	  if ( toNavajoType.containsKey(c) ) {
-		  return toNavajoType.get(c);
-	  } else {
-		  return c.getName();
-	  }
-	  
-  }
-  
-  public Class<?> getJavaType(String p) {
-	  return toJavaType.get(p);
-  }
-  
-  public Set<String> getNavajoTypes() {
-	  return toJavaType.keySet();
-  }
-  
   /**
    * Get the default NavajoFactory implementation.
    *
@@ -708,6 +663,29 @@ public static void main(String[] args){
 	}catch(Exception e){
 		logger.error("Error: ", e);
 	}
-	
+}
+@Override
+public void addNavajoType(String typeId, Class<?> clz) {
+	TypeManagerFactory.getInstance().addNavajoType(typeId, clz);
+}
+
+@Override
+public String getNavajoType(Class<?> c) {
+	return TypeManagerFactory.getInstance().getNavajoType(c);
+}
+
+@Override
+public Class<?> getJavaType(String p) {
+	return TypeManagerFactory.getInstance().getJavaType(p);
+}
+
+@Override
+public Set<String> getNavajoTypes() {
+	return TypeManagerFactory.getInstance().getNavajoTypes();
+}
+
+@Override
+public void readTypes() throws Exception {
+	logger.warn("Read types called on NavajoFactory?!");
 }
 }
