@@ -2,6 +2,10 @@ package com.dexels.navajo.article.command.impl;
 
 import java.util.Map;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+
 import com.dexels.navajo.article.ArticleContext;
 import com.dexels.navajo.article.ArticleException;
 import com.dexels.navajo.article.ArticleRuntime;
@@ -9,6 +13,7 @@ import com.dexels.navajo.article.command.ArticleCommand;
 import com.dexels.navajo.document.Header;
 import com.dexels.navajo.document.Navajo;
 import com.dexels.navajo.document.NavajoFactory;
+import com.dexels.navajo.document.nanoimpl.XMLElement;
 import com.dexels.navajo.script.api.FatalException;
 import com.dexels.navajo.script.api.LocalClient;
 
@@ -37,17 +42,17 @@ public class ServiceCommand implements ArticleCommand {
 
 	
 	@Override
-	public boolean execute(ArticleRuntime runtime, ArticleContext context, Map<String,String> parameters) throws ArticleException {
+	public JsonNode execute(ArticleRuntime runtime, ArticleContext context, Map<String,String> parameters, XMLElement element) throws ArticleException {
 		String name = parameters.get("name");
 		if(name==null) {
 			throw new ArticleException("Command: "+this.getName()+" can't be executed without required parameters: "+name);
 		}
 		String refresh = parameters.get("refresh");
-		if("false".equals(refresh)) {
+		if( "false".equals(refresh)) {
 			Navajo res = runtime.getNavajo(name);
 			if(res!=null) {
 				runtime.pushNavajo(name,res);
-				return false;
+				return null;
 			}
 		}
 		String input = parameters.get("input");
@@ -73,7 +78,7 @@ public class ServiceCommand implements ArticleCommand {
 		result.write(System.err);
 		System.err.println("END OF RESULT");
 		runtime.pushNavajo(name, result);
-		return false;
+		return null;
 	}
 
 	protected Navajo performCall(ArticleRuntime runtime, String name, Navajo n)
@@ -96,5 +101,10 @@ public class ServiceCommand implements ArticleCommand {
 
 	public void setLocalClient(LocalClient localClient) {
 		this.localClient = localClient;
+	}
+
+	@Override
+	public boolean writeMetadata(XMLElement e, ArrayNode outputArgs,ObjectMapper mapper) {
+		return false;
 	}
 }

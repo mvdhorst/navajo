@@ -1,6 +1,7 @@
 package com.dexels.navajo.tipi.vaadin;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -16,6 +17,7 @@ import tipi.TipiExtension;
 
 import com.dexels.navajo.document.types.Binary;
 import com.dexels.navajo.tipi.TipiBreakException;
+import com.dexels.navajo.tipi.TipiComponent;
 import com.dexels.navajo.tipi.TipiContext;
 import com.dexels.navajo.tipi.vaadin.application.TipiVaadinApplication;
 import com.dexels.navajo.tipi.vaadin.components.io.URLInputStreamSource;
@@ -126,37 +128,34 @@ public class VaadinTipiContext extends TipiContext {
 	}
 	
 	@Override
-	public void showWarning(String text, String title)
-	{
-		Notification not = new Notification(text, "", Notification.TYPE_WARNING_MESSAGE);
+	public void showWarning(String text, String title, TipiComponent tc){
+		Notification not = new Notification("",text, Notification.TYPE_WARNING_MESSAGE);
 		not.setPosition(7);
 		not.setDelayMsec(1500);
-		not.setDescription("");
 		mainWindow.showNotification(not);
 	}
-
 	
 	@Override
-	public void showError(String text, String title)
+	public void showError(String text, String title, TipiComponent tc)
 	{
-		Notification not = new Notification(text, "", Notification.TYPE_ERROR_MESSAGE);
+		Notification not = new Notification("", text, Notification.TYPE_ERROR_MESSAGE);
 		not.setDelayMsec(1500);
 		not.setPosition(7);
 		mainWindow.showNotification(not);
 	}
 
 	@Override
-	public void showInfo(String text, String title) {
-		Notification not = new Notification(text, title);
+	public void showInfo(String text, String title, TipiComponent tc) {
+		Notification not = new Notification(title, text);
 		not.setPosition(7);
 		not.setStyleName("info");
 		mainWindow.showNotification(not);
 	}
 
 	@Override
-	public void showQuestion(String text, String title, String[] options)
+	public void showQuestion(String text, String title, String[] options, TipiComponent tc)
 			throws TipiBreakException {
-
+		// not in use, vaadin's version of the TipiShowQuestion action handles the entirety
 	}
 
 	public void setMainWindow(Window mainWindow) {
@@ -231,7 +230,16 @@ public class VaadinTipiContext extends TipiContext {
 			is = new URLInputStreamSource((URL) u);
 		}
 		if (u instanceof Binary) {
-			lastMimeType = ((Binary)u).guessContentType();
+			final Binary binary = (Binary)u;
+			lastMimeType = binary.guessContentType();
+			is = new StreamResource.StreamSource() {
+				private static final long serialVersionUID = -8799171896370522098L;
+
+				@Override
+				public InputStream getStream() {
+					return binary.getDataAsStream();
+				}
+			};
 		}
 		if (is == null) {
 			return null;

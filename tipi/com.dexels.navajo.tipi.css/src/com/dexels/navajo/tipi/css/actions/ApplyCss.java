@@ -88,7 +88,7 @@ public class ApplyCss extends TipiAction implements TipiComponentInstantiatedLis
 		engine.setErrorHandler(new CSSErrorHandler() {
 			@Override
 			public void error(Exception e) {
-				logger.error("Error: ",e);
+				logger.error("CSS Error: ",e);
 			}
 		});
 		//		String style = "JLabel {uppercase:true}";
@@ -136,7 +136,7 @@ public class ApplyCss extends TipiAction implements TipiComponentInstantiatedLis
 			{
 				engine.applyStyles(engine.getElement(component), true);
 			}
-			catch(UnsupportedOperationException uoe)
+			catch(Throwable uoe)
 			{
 				logger.warn("Registering exception, but continuing: ", uoe);
 			}
@@ -162,14 +162,25 @@ public class ApplyCss extends TipiAction implements TipiComponentInstantiatedLis
 	}
 	@Override
 	public void componentInstantiated(final TipiComponent tc){
-		getContext().runSyncInEventThread(new Runnable(){
-
-			@Override
-			public void run() {
-				doComponentInstantiated(tc);
-				
-			}});
-
+		try
+		{
+			//Only apply if this component wants CSS.
+			Object applyCss = tc.getValue("applyCss");
+			if (applyCss != null && applyCss.toString().equals("true"))
+			{
+				getContext().runSyncInEventThread(new Runnable(){
+					
+					@Override
+					public void run() {
+						doComponentInstantiated(tc);
+						
+					}});
+			}
+		}
+		catch(UnsupportedOperationException uoe)
+		{
+			// nothing wrong, applyCss is not a possible value for this TipiComponent
+		}
 		
 	}
 }

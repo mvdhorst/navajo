@@ -2,12 +2,17 @@ package com.dexels.navajo.article.command.impl;
 
 import java.util.Map;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ArrayNode;
+
 import com.dexels.navajo.article.ArticleContext;
 import com.dexels.navajo.article.ArticleException;
 import com.dexels.navajo.article.ArticleRuntime;
 import com.dexels.navajo.article.command.ArticleCommand;
 import com.dexels.navajo.document.Navajo;
 import com.dexels.navajo.document.Property;
+import com.dexels.navajo.document.nanoimpl.XMLElement;
 
 public class SetValueCommand implements ArticleCommand {
 
@@ -32,7 +37,7 @@ public class SetValueCommand implements ArticleCommand {
 	}
 
 	@Override
-	public boolean execute(ArticleRuntime runtime, ArticleContext context, Map<String,String> parameters) throws ArticleException {
+	public JsonNode execute(ArticleRuntime runtime, ArticleContext context, Map<String,String> parameters, XMLElement xmlElement) throws ArticleException {
 //	    <setvalue service="clubsites/nl/init" element="parameters/poulecode" value="@poulecode"/>
 		String service = parameters.get("service");
 		if(service==null) {
@@ -63,6 +68,11 @@ public class SetValueCommand implements ArticleCommand {
 		} else {
 			p.setValue(value);
 		}
+		return null;
+	}
+
+	@Override
+	public boolean writeMetadata(XMLElement e, ArrayNode outputArgs,ObjectMapper mapper) {
 		return false;
 	}
 
