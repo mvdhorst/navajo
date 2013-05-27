@@ -6,7 +6,7 @@
 <%@page import="java.net.*"%>
 <%@page import="java.util.*"%>
 <%@ taglib prefix="c" uri="WEB-INF/tags/c.tld"%>
-<jsp:useBean id="manager" class="com.dexels.navajo.tipi.appmanager.ApplicationManager" scope="page" />
+<jsp:useBean id="manager" type="com.dexels.navajo.tipi.appmanager.ApplicationManager" class="com.dexels.navajo.tipi.appmanager.impl.ApplicationManagerImpl" scope="page" />
 <jsp:useBean id="versionResolver" class="com.dexels.navajo.tipi.projectbuilder.VersionResolver" scope="page" />
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">

@@ -126,7 +126,15 @@ public class TipiAdminServlet extends HttpServlet {
 	}
 
 	
-//	private XMLElement doCreateJnlp(HttpServletRequest request, boolean build, boolean clean) throws IOException {
+	public void activate() {
+		System.err.println("Activating TipiAdminServlet");
+	}
+	
+	public void deactivate() {
+		System.err.println("Deactivating TipiAdminServlet");
+	}
+
+	//	private XMLElement doCreateJnlp(HttpServletRequest request, boolean build, boolean clean) throws IOException {
 //		String servletPath = request.getServletPath();
 //		String appStoreUrl = getServletContext().getInitParameter("appUrl");
 //		String appFolder = getServletContext().getInitParameter("appFolder");

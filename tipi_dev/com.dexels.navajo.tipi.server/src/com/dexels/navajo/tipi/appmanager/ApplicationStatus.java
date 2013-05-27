@@ -47,7 +47,10 @@ public class ApplicationStatus implements Comparable<ApplicationStatus> {
 	
 	
 	public String getCurrentDeploy() {
-		return currentDeploy;
+		if(currentDeploy!=null) {
+			return currentDeploy;
+		}
+		return "defaultDeploy";
 	}
 
 	public String getRealPath() {
