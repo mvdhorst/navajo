@@ -1,4 +1,4 @@
-package com.dexels.navajo.tipi;
+package com.dexels.navajo.tipi.appstore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.dexels.navajo.tipi;
+package com.dexels.navajo.tipi.appstore;
 
 
 import java.io.BufferedInputStream;
@@ -17,7 +17,6 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -35,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import com.dexels.navajo.tipi.projectbuilder.ClientActions;
 import com.dexels.navajo.tipi.projectbuilder.ProjectBuilder;
 import com.dexels.navajo.tipi.projectbuilder.XsdBuilder;
-import com.oreilly.servlet.MultipartRequest;
 
 public class TipiAdminServlet extends HttpServlet {
 
@@ -181,9 +179,9 @@ public class TipiAdminServlet extends HttpServlet {
 		if (commando.equals("create")) {
 			return create(application, appDir);
 		}
-		if (commando.equals("upload")) {
-			return uploadMultipart(application,request);
-		}
+//		if (commando.equals("upload")) {
+//			return uploadMultipart(application,request);
+//		}
 		if (commando.equals("saveConfig")) {
 			return saveConfig(application, appDir,request,request.getParameter("deploy"));
 		}
@@ -250,34 +248,7 @@ public class TipiAdminServlet extends HttpServlet {
 			logger.error("Error: ",e);
 			return "ERROR -  "+e.getMessage();
 		}}
-	private String uploadMultipart(String application, HttpServletRequest request) {
-//		logger.info(">>" +request.getParameterMap());
-		try {
-			InputStream is =  request.getInputStream();
-//			File apppp = new File(applicationFolder);
-			MultipartRequest mr = new MultipartRequest(request, System.getProperty("java.io.tmpdir"),20000000);
-			Enumeration<String> e =  mr.getFileNames();
-	
-			while (e.hasMoreElements()) {
-				String object = e.nextElement();
-				File f = mr.getFile(object);
-//				logger.info("Filename returned: "+f.getAbsolutePath());
-				createApp(f,application);
-				f.delete();
-//				logger.info("File detected: "+object);
-			}
-			File tmp = File.createTempFile("testUpload",".zip");
-			FileOutputStream fos = new FileOutputStream(tmp);
-			copyResource(fos, is);
-			tmp.deleteOnExit();	
-			createApp(tmp,application);
-			
-			return "File dumped @"+ tmp.getAbsolutePath();
-		} catch (IOException e) {
-			logger.error("Error: ",e);
-			return "Problem: "+e.getMessage();
-		}
-	}
+
 	
 	private String updateApp( String appName) throws IOException {
 //		public static String callAnt(File buildFile, File baseDir, Map<String,String> userProperties) throws IOException {

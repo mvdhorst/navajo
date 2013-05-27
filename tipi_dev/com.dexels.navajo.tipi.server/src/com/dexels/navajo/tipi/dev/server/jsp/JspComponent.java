@@ -47,36 +47,23 @@ public class JspComponent {
 		try {
 			httpContext = webContainer.createDefaultHttpContext();
 			Dictionary<String, Object> contextProperties = new Hashtable<String, Object>();
-//			logger.info("Injecting forced Navajo path: "
-//					+ navajoConfig.getRootPath());
-//			contextProperties.put("forcedNavajoPath",
-//					navajoConfig.getRootPath());
 			webContainer.setContextParam(contextProperties, httpContext);
 
-			// PageContext pc = new Page
-
-			webContainer.registerJsps(new String[] { "/index.jsp" },
-					httpContext);
-			webContainer
-					.registerJsps(new String[] { "/main.jsp" }, httpContext);
-			webContainer.registerJsps(new String[] { "/navajotester.jsp" },
-					httpContext);
-			webContainer.registerJsps(new String[] { "/tml/*" }, httpContext);
-			webContainer.registerJsps(new String[] { "/tml/manager/*" },
-					httpContext);
-			webContainer.registerJsps(new String[] { "/tml/installer/*" },
-					httpContext);
-			webContainer.registerResources("/index.html", "/index.html",
-					httpContext);
-			webContainer.registerResources("/images", "/images", httpContext);
+			webContainer.registerJsps(new String[] { "/index.jsp" },httpContext);
+			webContainer.registerJsps(new String[] { "/details.jsp" }, httpContext);
+			webContainer.registerJsps(new String[] { "/editor_fck.jsp" },httpContext);
+			webContainer.registerJsps(new String[] { "/editor.jsp" }, httpContext);
+			webContainer.registerJsps(new String[] { "/empty.jsp" },httpContext);
+			webContainer.registerJsps(new String[] { "/message.jsp" },httpContext);
+			webContainer.registerJsps(new String[] { "/repository.jsp" },httpContext);
+			webContainer.registerJsps(new String[] { "/parts/*" },httpContext);
 			webContainer.registerResources("/css", "/css", httpContext);
+			webContainer.registerResources("/css/patches", "/css/patches", httpContext);
+			webContainer.registerResources("/css/screen", "/css/screen", httpContext);
+			webContainer.registerResources("/images", "/images", httpContext);
 			webContainer.registerResources("/js", "/js", httpContext);
-			webContainer.registerResources("/resources", "/resources",
-					httpContext);
-			webContainer.registerResources("/yaml", "/yaml", httpContext);
-			webContainer.registerResources("/WEB-INF", "/WEB-INF", httpContext);
-			webContainer.registerWelcomeFiles(new String[] { "index.html" },
-					false, httpContext);
+			webContainer.registerResources("/js/lib", "/js/lib", httpContext);
+			webContainer.registerWelcomeFiles(new String[] { "index.php" },false, httpContext);
 		} catch (NamespaceException e) {
 			logger.error("Error: ", e);
 		}

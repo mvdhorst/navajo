@@ -2,6 +2,7 @@ package com.dexels.navajo.tipi.appmanager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,8 +54,8 @@ private ServletContext context = null;
 		String appFolder = context.getInitParameter("appFolder"); 
 		File ff = null;
 		if(appFolder==null) {
-			File contextFolder = new File(context.getRealPath("."));
-			ff = new File(contextFolder, "DefaultApps");
+			ff = new File("/Users/frank/Documents/workspace42/"); //context.getRealPath("."));
+//			ff = new File(contextFolder, "DefaultApps");
 		} else {
 			File suppliedFolder = new File(appFolder);
 			if(suppliedFolder.isAbsolute()) {
@@ -101,6 +102,7 @@ private ServletContext context = null;
 			appStatus.setManager(this);
 			appStatus.load(file);
 			appStats.add(appStatus);
+			Collections.sort(appStats);
 		}
 	}
 

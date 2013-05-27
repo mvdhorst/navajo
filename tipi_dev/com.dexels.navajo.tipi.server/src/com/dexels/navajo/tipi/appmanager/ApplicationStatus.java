@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ApplicationStatus {
+public class ApplicationStatus implements Comparable<ApplicationStatus> {
 
 	
 	private final static Logger logger = LoggerFactory
@@ -416,5 +416,10 @@ public class ApplicationStatus {
 		}
 		bout.flush();
 	
+	}
+
+	@Override
+	public int compareTo(ApplicationStatus a) {
+		return getApplicationName().compareTo(a.getApplicationName());
 	}
 }
