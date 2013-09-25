@@ -9,6 +9,7 @@
 		<param name="style" type="string" required="false" />
 		<param name="skipMainCss" type="boolean" required="false"/>
 		<param name="forceReloadCssDefinition" type="boolean" required="false"/>
+		<param name="doNotCascade" type="boolean" required="false"/>
 		<param name="component" type="component" required="true" />
 	</tipiaction>
 

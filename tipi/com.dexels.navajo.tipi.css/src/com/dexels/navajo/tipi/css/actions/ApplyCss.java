@@ -59,6 +59,11 @@ public class ApplyCss extends TipiAction implements TipiComponentInstantiatedLis
 			{
 				skipMainCss = false;
 			}
+			Boolean doNotCascade = (Boolean) getEvaluatedParameterValue("doNotCascade", event);
+			if (doNotCascade == null)
+			{
+				doNotCascade = false;
+			}
 			if (forceReloadCssDefinition)
 			{
 				component.getContext().reloadCssDefinitions("main");
@@ -68,12 +73,12 @@ public class ApplyCss extends TipiAction implements TipiComponentInstantiatedLis
 			{
 				for (String cssDefinition : component.getContext().getCssDefinitions("main"))
 				{
-					applyCss(component, cssDefinition, null, event);
+					applyCss(component, cssDefinition, null, event, !doNotCascade);
 				}
 			}
 			for (String cssDefinition : component.getContext().getCssDefinitions(getHomeDefinitionName(component)))
 			{
-				applyCss(component, cssDefinition, null, event);
+				applyCss(component, cssDefinition, null, event, !doNotCascade);
 			}
 		}
 		else
@@ -128,13 +133,17 @@ public class ApplyCss extends TipiAction implements TipiComponentInstantiatedLis
 		
 	public static void applyCss(TipiComponent component, String styleString, URL styleResource, final TipiEvent event)
 	{
+		applyCss(component, styleString, styleResource, event, true);
+	}
+	public static void applyCss(TipiComponent component, String styleString, URL styleResource, final TipiEvent event, Boolean applyStylesToChildNodes)
+	{
 		CSSTipiEngineImpl engine = initializeEngine(component, styleString, styleResource, event);
 		if (engine != null)
 		{
 //			long afterparse = System.currentTimeMillis();
 			try
 			{
-				engine.applyStyles(engine.getElement(component), true);
+				engine.applyStyles(engine.getElement(component), applyStylesToChildNodes);
 			}
 			catch(Throwable uoe)
 			{
