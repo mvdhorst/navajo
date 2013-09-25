@@ -225,7 +225,7 @@ public class TipiTabs extends TipiSwingDataComponentImpl {
 					Color fore = tb.getTabForegroundColor();
 					String tip = tb.getTabTooltip();
 					String text = tb.getTabText();
-					if(text==null) {
+					if (text==null) {
 						text = stringConstraints;
 					}
 					if (tabIcon != null) {
@@ -299,8 +299,7 @@ public class TipiTabs extends TipiSwingDataComponentImpl {
 			final Integer sel = (Integer) object;
 			runSyncInEventThread(new Runnable() {
 				public void run() {
-					((JTabbedPane) getContainer()).setSelectedIndex(sel
-							.intValue());
+					setSelectedIndex(sel);
 				}
 			});
 		}
@@ -346,24 +345,13 @@ public class TipiTabs extends TipiSwingDataComponentImpl {
 			return tc;
 		}
 		if (name.equals("selectedindex")) {
-			return new Integer(
-					((JTabbedPane) getContainer()).getSelectedIndex());
+			return getSelectedIndex();
 		}
 		if (name.equals("lastselectedindex")) {
-			return new Integer(getIndexOfTab(lastSelectedTab));
+			return getLastSelectedIndex();
 		}
 
 		return super.getComponentValue(name);
-	}
-
-	private int getIndexOfTab(Component c) {
-		JTabbedPane pane = (JTabbedPane) getContainer();
-		for (int i = 0; i < pane.getComponentCount(); i++) {
-			if (pane.getComponent(i) == c) {
-				return i;
-			}
-		}
-		return -1;
 	}
 
 	@Override
@@ -392,14 +380,16 @@ public class TipiTabs extends TipiSwingDataComponentImpl {
 					for (Component c : childList) {
 						boolean isVisible = visibilityMap.get(c);
 						if (isVisible) {
+							String text = null;
 							if (c instanceof TipiTabbable)
 							{
-								jt.addTab(((TipiTabbable)c).getTabText(), c);
+								text = ((TipiTabbable)c).getTabText();
 							}
-							else
+							if (text == null)
 							{
-								jt.addTab(constraintMap.get(c), c);
+								text = constraintMap.get(c);
 							}
+							jt.addTab(text, c);
 						}
 					}
 					if (lastSelectedTab != null) {
@@ -441,4 +431,28 @@ public class TipiTabs extends TipiSwingDataComponentImpl {
 	//
 	// super.load(elm,instance, context);
 	// }
+	
+	private Integer getLastSelectedIndex()
+	{
+		return childList.indexOf(lastSelectedTab);
+	}
+	private Integer getSelectedIndex()
+	{
+		Component c = ((JTabbedPane) getContainer()).getSelectedComponent();
+		return childList.indexOf(c);
+		
+	}
+	private void setSelectedIndex(Integer i)
+	{
+		Component c = childList.get(i);
+		Boolean isVisible = visibilityMap.get(c);
+		if (isVisible)
+		{
+			((JTabbedPane) getContainer()).setSelectedComponent(c);
+		}
+		else
+		{
+			logger.warn("Trying to select index of invisible tab, ignoring: " + i);
+		}
+	}
 }
