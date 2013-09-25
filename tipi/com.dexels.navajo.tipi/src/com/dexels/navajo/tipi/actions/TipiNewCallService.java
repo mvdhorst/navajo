@@ -1,14 +1,20 @@
 package com.dexels.navajo.tipi.actions;
 
 import java.util.Collections;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.dexels.navajo.client.ClientException;
+import com.dexels.navajo.document.Message;
 import com.dexels.navajo.document.Navajo;
 import com.dexels.navajo.document.NavajoFactory;
 import com.dexels.navajo.document.Operand;
+import com.dexels.navajo.document.Property;
+import com.dexels.navajo.mapping.MappingUtils;
+import com.dexels.navajo.server.Access;
+import com.dexels.navajo.server.UserException;
 import com.dexels.navajo.tipi.TipiBreakException;
 import com.dexels.navajo.tipi.TipiException;
 import com.dexels.navajo.tipi.TipiValue;
@@ -43,6 +49,7 @@ public class TipiNewCallService extends TipiAction {
 	public void execute(TipiEvent event)
 			throws com.dexels.navajo.tipi.TipiException,
 			com.dexels.navajo.tipi.TipiBreakException {
+		logger.info("Current params: " + parameterMap.entrySet());
 
 		TipiValue parameter = getParameter("input");
 		// String unevaluated = null;
@@ -155,6 +162,7 @@ public class TipiNewCallService extends TipiAction {
 			// nn
 			// Don't let NavajoClient touch your original navajo! It will mess
 			// things up.
+			parseCreatePropertyParams(nn);
 			myContext.fireNavajoSent(input, service);
 
 			Navajo result = myContext.getClient().doSimpleSend(nn, service);
@@ -186,5 +194,47 @@ public class TipiNewCallService extends TipiAction {
 			logger.error("Error: ",e);
 		}
 
+	}
+	private Navajo parseCreatePropertyParams(Navajo input) throws TipiException
+	{
+		NavajoFactory navajoFactory = null;
+		for (Entry<String, TipiValue> paramEntry : parameterMap.entrySet())
+		{
+			if (paramEntry.getKey().startsWith("createProperty:"))
+			{
+				if (navajoFactory == null)
+				{
+					navajoFactory = NavajoFactory.getInstance();
+				}
+				String fullName = paramEntry.getKey().substring(15);
+			    String propName = MappingUtils.getStrippedPropertyName(fullName);
+			    Property currentProperty = input.getProperty(fullName);
+		        if (currentProperty == null) {
+		          //System.out.println("CONSTRUCTING NEW PROPERTY: " + fullName);
+		        	currentProperty = navajoFactory.createProperty(input, propName, Property.STRING_PROPERTY, "", 25, "", Property.DIR_IN);
+		        } else {
+		        	//System.out.println("FOUND EXISTING PROPERTY: " + fullName);
+		        }
+		        
+		        TipiValue value = paramEntry.getValue();
+		        currentProperty.setType(value.getType());
+		        if (value.getRawValue() == null)
+		        {
+		        	currentProperty.setValue((String) null);
+		        }
+		        else
+		        {
+		        	currentProperty.setAnyValue(value.getRawValue());
+		        }
+				
+		        Message msg = MappingUtils.getMessageObject(fullName, null, false, input, false, "", -1);
+		        if ( msg == null ) {
+		      	  throw new TipiException("Could not create property " + fullName + ". Perhaps a missing message name?");
+		        }
+		        msg.addProperty(currentProperty);
+
+			}
+		}
+		return input;
 	}
 }
