@@ -2,7 +2,9 @@
 <classpath>
 	<classpathentry excluding="**/CVS/*" kind="src" path="src"/>
 	<classpathentry kind="src" path="testsrc"/>
+	<classpathentry exported="true" kind="lib" path="lib/com.dexels.navajo.adapters.scala-2.0.11-SNAPSHOT.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

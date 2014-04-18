@@ -42,7 +42,8 @@ Export-Package: com.dexels.navajo.adapter,
  com.dexels.navajo.jdbc;uses:="com.dexels.navajo.server,com.dexels.navajo.document.types,org.slf4j",
  internal;uses:="com.dexels.navajo.serviceplugin,com.dexels.navajo.document",
  navajoadapters;uses:="org.osgi.framework,navajoextension",
- org.dexels.grus;version="1.0.0"
+ org.dexels.grus;version="1.0.0",
+ navajo.navajoadapters
 Bundle-Vendor: Dexels
 Import-Package: com.dexels.navajo.adapter.navajomap.manager,
  com.dexels.navajo.client,
@@ -80,4 +81,10 @@ Import-Package: com.dexels.navajo.adapter.navajomap.manager,
  org.junit.runner;version="4.8.2";resolution:=optional,
  org.osgi.framework;version="1.5.0";resolution:=optional,
  org.slf4j
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/com.dexels.navajo.adapters.scala-2.0.11-SNAPSHOT.jar
+Navajo-Name: NavajoAdapters
+Navajo-Extension: com/dexels/navajo/adapter/adapters.xml,
+ com/dexels/navajo/adapter/functions/adapterfunctions.xml
+Require-Bundle: com.dexels.navajo.scala;bundle-version="1.0.0";resolution:=optional,
+ org.scala-lang.scala-library;bundle-version="2.10.3";resolution:=optional
